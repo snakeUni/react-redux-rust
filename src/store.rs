@@ -1,10 +1,10 @@
-use crate::{ Middleware, Reducer, Subscription, Vec };
+use crate::{Middleware, Reducer, Subscription, Vec};
 
 pub struct Store<State, Action> {
   reducer: Reducer<State, Action>,
   state: State,
   middleware: Vec<Middleware<State, Action>>,
-  subscriptions: Vec<Subscription<State>>
+  subscriptions: Vec<Subscription<State>>,
 }
 
 impl<State, Action> Store<State, Action> {
@@ -13,11 +13,11 @@ impl<State, Action> Store<State, Action> {
       reducer,
       state: initial_state,
       middleware: Vec::new(),
-      subscriptions: Vec::new()
+      subscriptions: Vec::new(),
     }
   }
 
-  pub fn getState(&self) -> &State {
+  pub fn get_state(&self) -> &State {
     &self.state
   }
 
@@ -45,13 +45,13 @@ impl<State, Action> Store<State, Action> {
   }
 
   pub fn dispatch_reducer(&mut self, action: &Action) {
-    self.state = (&self.reducer)(self.getState(), action);
+    self.state = (&self.reducer)(self.get_state(), action);
     self.dispatch_subscriptions();
   }
 
   pub fn dispatch_subscriptions(&self) {
     for subscription in &self.subscriptions {
-      subscription(self.getState());
+      subscription(self.get_state());
     }
   }
 
