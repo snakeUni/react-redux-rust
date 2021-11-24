@@ -55,9 +55,19 @@ impl<State, Action> Store<State, Action> {
     }
   }
 
-  pub fn subscribe(&mut self, callback: Subscription<State>) {
+  pub fn subscribe(&mut self, callback: Subscription<State>) -> fn() {
     self.subscriptions.push(callback);
+
+    // 创建一个闭包
+    let un_subscribe = ||{
+      let idx = self.subscriptions.binary_search(&callback).unwrap_or_else(|x| x);
+      self.subscriptions.remove(idx);
+    };
+
+
+    un_subscribe
   }
+
 
   pub fn add_middleware(&mut self, middleware: Middleware<State, Action>) {
     self.middleware.push(middleware);
