@@ -55,17 +55,14 @@ impl<State, Action> Store<State, Action> {
     }
   }
 
-  pub fn subscribe(&mut self, callback: Subscription<State>) -> fn() {
+  pub fn subscribe(&mut self, callback: Subscription<State>) -> impl FnMut() -> () + '_ {
     self.subscriptions.push(callback);
 
     // 创建一个闭包
-    let un_subscribe = ||{
-      let idx = self.subscriptions.binary_search(&callback).unwrap_or_else(|x| x);
+   move || {
+      let idx = self.subscriptions.len();
       self.subscriptions.remove(idx);
-    };
-
-
-    un_subscribe
+    }
   }
 
 
